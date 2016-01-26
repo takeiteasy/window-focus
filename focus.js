@@ -12,6 +12,11 @@ const app           = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 var   mainWindow    = null;
 
+if (process.argv.length <= 2) {
+  console.log("ERROR! You need to pass a running window as an argument!");
+  app.quit();
+}
+
 app.on('window-all-closed', function() {
   app.quit();
 });
