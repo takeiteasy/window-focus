@@ -36,7 +36,7 @@ app.on('ready', function() {
     app.quit();
   }
   setInterval(function() {
-    const x = cp.spawnSync('sh', ["./activewin.sh"]);
+    const x = cp.spawnSync('sh', [__dirname + "/activewin.sh"]);
     if (x.stderr.toString().slice(0, -1).toLowerCase() != process.argv[2].toLowerCase()) {
       console.log("Lost focus of \"" + process.argv[2] + "\"! Bye!");
       app.quit();
