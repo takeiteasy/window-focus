@@ -5,16 +5,6 @@ const electron      = require('electron'),
       app           = electron.app,
       BrowserWindow = electron.BrowserWindow;
 
-const sizep   = cp.spawnSync('sh', ['-c', 'system_profiler SPDisplaysDataType | \
-                                           grep -Eoh "[0-9]{4} x [0-9]{4}"']).stdout.toString().split('\n').map((x) =>{
-                                             return x.split(' x ');
-                                           }).slice(0, -1);
-
-const bg_loc  = '/tmp/tmp_bg_';
-cp.spawnSync('screencapture', ['-x'].concat(Array.apply(null, { length: sizep.length }).map((x, i) => {
-  return bg_loc + i.toString() + '.png';
-})));
-
 function run_applescript(cmd) {
   const x = cp.spawnSync('osascript', ['-e', cmd]);
   return [ x.stdout.toString(), x.stderr.toString() ];
@@ -35,9 +25,12 @@ app.on('window-all-closed', function() {
 });
 
 app.on('ready', function() {
-  const screen = electron.screen;
+  const screen   = electron.screen;
   const displays = screen.getAllDisplays();
-  console.log(displays);
+  const bg_loc   = '/tmp/tmp_bg_';
+  cp.spawnSync('screencapture', ['-x'].concat(Array.apply(null, { length: displays.length }).map((x, i) => {
+    return bg_loc + i.toString() + '.png';
+  })));
 
   var windows = [];
   for (let x = 0; x < displays.length; ++x) {
