@@ -4,15 +4,16 @@ const cp            = require('child_process');
 const electron      = require('electron'),
       app           = electron.app,
       BrowserWindow = electron.BrowserWindow;
-var   main_win      = null,
-      target_proc   = null;
-
-const bg_loc  = '/tmp/tmp_bg.png';
-cp.spawnSync('screencapture', ['-x', bg_loc]);
 
 const sizep   = cp.spawnSync('sh', ['-c', 'system_profiler SPDisplaysDataType | \
-                                           grep -Eoh "[0-9]{4} x [0-9]{4}" | \
-                                           tr -d [:space:]']).stdout.toString().split('x');
+                                           grep -Eoh "[0-9]{4} x [0-9]{4}"']).stdout.toString().split('\n').map((x) =>{
+                                             return x.split(' x ');
+                                           }).slice(0, -1);
+
+const bg_loc  = '/tmp/tmp_bg_';
+cp.spawnSync('screencapture', ['-x'].concat(Array.apply(null, { length: sizep.length }).map((x, i) => {
+  return bg_loc + i.toString() + '.png';
+})));
 
 function run_applescript(cmd) {
   const x = cp.spawnSync('osascript', ['-e', cmd]);
@@ -23,6 +24,7 @@ function get_activewin() {
   return run_applescript('tell application "System Events" to return name of first application process whose frontmost is true')[0].slice(0, -1);
 }
 
+var target_proc   = null;
 if (process.argv.length <= 2)
   target_proc = get_activewin();
 else
@@ -33,18 +35,31 @@ app.on('window-all-closed', function() {
 });
 
 app.on('ready', function() {
-  main_win = new BrowserWindow({
-    width                  : parseInt(sizep[0]),
-    height                 : parseInt(sizep[1]),
-    transparent            : true,
-    frame                  : false,
-    moveable               : false,
-    resizable              : false,
-    enableLargerThanScreen : true,
-    x                      : -8,
-    y                      : -8
-  });
-  main_win.loadURL('file://' + __dirname + '/index.html');
+  const screen = electron.screen;
+  const displays = screen.getAllDisplays();
+  console.log(displays);
+
+  var windows = [];
+  for (let x = 0; x < displays.length; ++x) {
+    var win_x = new BrowserWindow({
+      width                  : displays[x].bounds.width,
+      height                 : displays[x].bounds.height,
+      transparent            : true,
+      frame                  : false,
+      moveable               : false,
+      resizable              : false,
+      enableLargerThanScreen : true,
+      x                      : displays[x].bounds.x,
+      y                      : displays[x].bounds.y
+    });
+    win_x.loadURL('file://' + __dirname + '/index.html?v=' + x.toString());
+
+    win_x.on('closed', () => {
+      app.quit();
+    }).on(   'focus',  () => {
+      app.quit();
+    });
+  }
 
   if (run_applescript('\
 tell application "' + target_proc + '"\n\
@@ -65,12 +80,4 @@ end tell')[1].length > 0) {
     if (get_activewin() != target_proc)
       app.quit();
   }, 1);
-
-  main_win.on('closed', function() {
-    require('fs').unlink(bg_loc);
-    app.quit();
-  }).on('focus', function() {
-    require('fs').unlink(bg_loc);
-    app.quit();
-  });
 });
