@@ -1,11 +1,9 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-FOCUS="/Users/lain/._/focus_blur/."
-
-PID=$(ps | grep -Eo '[0-9]{5}' | sed '3!d')
+let "PID = $$ - 1"
 TEST=$(swift active_windows.swift | grep $PID)
 while [ $? -ne 0 ]; do
   printf '.'
   TEST=$(swift active_windows.swift | grep $PID)
 done
-electron $FOCUS$(echo "$TEST" | grep -Eo 'kCGWindowOwnerName": [0-9a-zA-Z]+' | cut -d: -f2)
+focus "$(echo "$TEST" | grep -Eo 'kCGWindowOwnerName": [0-9a-zA-Z]+' | cut -d: -f2)"
