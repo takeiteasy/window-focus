@@ -1,0 +1,1 @@
+clang -fobjc-arc -lobjc -framework AppKit -framework Metal -framework MetalKit -framework Foundation *.m -DWO_XCODE -DRES_PATH="\"$(pwd)\""
