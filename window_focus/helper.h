@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-#ifdef WO_XCODE
+#ifdef NO_XCODE
 #ifdef RES_PATH
 #define __RES(X,Y) (X "/" Y)
 #define RES(X) (__RES(RES_PATH, X))
@@ -20,7 +20,7 @@
 #endif
 #define TMP_BG_LOC ("/tmp/tmp_focus_bg.png")
 
-#ifdef WO_XCODE
+#ifdef NO_XCODE
 NSString* get_file_contents(const char* path) {
   FILE *file = fopen(path, "rb");
   if (!file) {

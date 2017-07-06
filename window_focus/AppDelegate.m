@@ -12,7 +12,7 @@
 @implementation AppDelegate
 -(id)init {
   NSError *error = NULL;
-  NSAppleScript* capture_script = LOAD_APPLESCRIPT("capture.applescript");
+  NSAppleScript* capture_script = LOAD_APPLESCRIPT("capture.scpt");
   
   if (!applescript(capture_script) || access(TMP_BG_LOC, F_OK)) {
     NSLog(@"Failed to take screenshot");
@@ -72,7 +72,7 @@
   
   _numVertices = sizeof(quadVertices) / sizeof(AAPLVertex);
   
-#ifdef WO_XCODE
+#ifdef NO_XCODE
   NSString* librarySrc = [NSString stringWithContentsOfFile:@"library.metal"
                                                    encoding:NSUTF8StringEncoding
                                                       error:&error];

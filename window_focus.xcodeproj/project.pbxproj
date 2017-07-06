@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		D32270DC1F0DCE3B00728074 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D32270DB1F0DCE3B00728074 /* Assets.xcassets */; };
 		D32270EF1F0DCE7700728074 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D32270E71F0DCE7700728074 /* AppDelegate.m */; };
-		D32270F01F0DCE7700728074 /* capture.applescript in Sources */ = {isa = PBXBuildFile; fileRef = D32270E81F0DCE7700728074 /* capture.applescript */; };
 		D32270F11F0DCE7700728074 /* library.metal in Sources */ = {isa = PBXBuildFile; fileRef = D32270EA1F0DCE7700728074 /* library.metal */; };
 		D32270F21F0DCE7700728074 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D32270EB1F0DCE7700728074 /* main.m */; };
 		D32270F31F0DCE7700728074 /* Texture.m in Sources */ = {isa = PBXBuildFile; fileRef = D32270EC1F0DCE7700728074 /* Texture.m */; };
@@ -17,7 +16,7 @@
 		D32270FA1F0DCE8600728074 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D32270F81F0DCE8600728074 /* Metal.framework */; };
 		D32270FB1F0DCE8600728074 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D32270F91F0DCE8600728074 /* MetalKit.framework */; };
 		D32270FD1F0DCE8B00728074 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D32270FC1F0DCE8B00728074 /* Foundation.framework */; };
-		D32270FE1F0DCEA000728074 /* capture.applescript in Resources */ = {isa = PBXBuildFile; fileRef = D32270E81F0DCE7700728074 /* capture.applescript */; };
+		D32270FE1F0DCEA000728074 /* capture.scpt in Resources */ = {isa = PBXBuildFile; fileRef = D32270E81F0DCE7700728074 /* capture.scpt */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,7 +25,7 @@
 		D32270E01F0DCE3B00728074 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D32270E61F0DCE7700728074 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		D32270E71F0DCE7700728074 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		D32270E81F0DCE7700728074 /* capture.applescript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.applescript; path = capture.applescript; sourceTree = "<group>"; };
+		D32270E81F0DCE7700728074 /* capture.scpt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = capture.scpt; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.applescript; };
 		D32270E91F0DCE7700728074 /* helper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = helper.h; sourceTree = "<group>"; };
 		D32270EA1F0DCE7700728074 /* library.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = library.metal; sourceTree = "<group>"; };
 		D32270EB1F0DCE7700728074 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -80,7 +79,7 @@
 				D32270EC1F0DCE7700728074 /* Texture.m */,
 				D32270EE1F0DCE7700728074 /* Texture.h */,
 				D32270EA1F0DCE7700728074 /* library.metal */,
-				D32270E81F0DCE7700728074 /* capture.applescript */,
+				D32270E81F0DCE7700728074 /* capture.scpt */,
 				D32270ED1F0DCE7700728074 /* 3rdparty */,
 				D32270DB1F0DCE3B00728074 /* Assets.xcassets */,
 				D32270E01F0DCE3B00728074 /* Info.plist */,
@@ -158,7 +157,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D32270FE1F0DCEA000728074 /* capture.applescript in Resources */,
+				D32270FE1F0DCEA000728074 /* capture.scpt in Resources */,
 				D32270DC1F0DCE3B00728074 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -171,7 +170,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				D32270F11F0DCE7700728074 /* library.metal in Sources */,
-				D32270F01F0DCE7700728074 /* capture.applescript in Sources */,
 				D32270F21F0DCE7700728074 /* main.m in Sources */,
 				D32270F31F0DCE7700728074 /* Texture.m in Sources */,
 				D32270EF1F0DCE7700728074 /* AppDelegate.m in Sources */,
@@ -313,6 +311,7 @@
 				D32270E51F0DCE3B00728074 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
