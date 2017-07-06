@@ -14,7 +14,7 @@
   NSError *error = NULL;
   NSAppleScript* capture_script = LOAD_APPLESCRIPT("capture.scpt");
   
-  if (!applescript(capture_script) || access(TMP_BG_LOC, F_OK)) {
+  if (!RUN_APPLESCRIPT(capture_script) || access(TMP_BG_LOC, F_OK)) {
     NSLog(@"Failed to take screenshot");
     return nil;
   }
@@ -73,15 +73,7 @@
   _numVertices = sizeof(quadVertices) / sizeof(AAPLVertex);
   
 #ifdef NO_XCODE
-  NSString* librarySrc = [NSString stringWithContentsOfFile:@"library.metal"
-                                                   encoding:NSUTF8StringEncoding
-                                                      error:&error];
-  if(!librarySrc) {
-    NSLog(@"Failed to read shaders: %@", [error localizedDescription]);
-    return nil;
-  }
-  
-  _library = [_device newLibraryWithSource:librarySrc
+  _library = [_device newLibraryWithSource:get_file_contents("library.metal")
                                    options:nil
                                      error:&error];
   if(!_library) {

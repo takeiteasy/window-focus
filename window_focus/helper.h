@@ -46,4 +46,4 @@ NSString* get_file_contents(const char* path) {
 #endif
 
 #define LOAD_APPLESCRIPT(X) ([[NSAppleScript alloc] initWithSource:get_file_contents(RES(X))])
-#define applescript(X) ([X executeAndReturnError:nil])
+#define RUN_APPLESCRIPT(X) ([X executeAndReturnError:nil])
