@@ -6,8 +6,6 @@
 //  Copyright © 2017 George Watson. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-
 #ifdef NO_XCODE
 #ifdef RES_PATH
 #define __RES(X,Y) (X "/" Y)
@@ -44,6 +42,3 @@ NSString* get_file_contents(const char* path) {
 #else
 #define get_file_contents(X) ([NSString stringWithContentsOfURL:[NSURL fileURLWithPath:X] encoding:NSASCIIStringEncoding error:&error])
 #endif
-
-#define LOAD_APPLESCRIPT(X) ([[NSAppleScript alloc] initWithSource:get_file_contents(RES(X))])
-#define RUN_APPLESCRIPT(X) ([X executeAndReturnError:nil])

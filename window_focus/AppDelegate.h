@@ -19,7 +19,9 @@ typedef enum AAPLVertexInputIndex {
 } AAPLVertexInputIndex;
 
 typedef enum AAPLTextureIndex {
-  AAPLTextureIndexBaseColor = 0,
+  AAPLTextureIndexInput  = 0,
+  AAPLTextureIndexOutput = 1,
+  AAPLTextureIndexWeight = 2
 } AAPLTextureIndex;
 
 typedef struct {
@@ -45,10 +47,13 @@ static const AAPLVertex quadVertices[] = {
   id<MTLBuffer> _vertexBuffer;
   NSUInteger _numVertices;
   id<MTLCommandQueue> _commandQueue;
-  id<MTLTexture> _texture;
+  id<MTLTexture> _in_texture, _out_texture, _weight_texture;
   vector_uint2 _viewportSize;
   
   id<MTLComputePipelineState> _pipeline;
   id<MTLBuffer> _uniformBuffer;
+  
+  MTLSize _threadgroupSize;
+  MTLSize _threadgroupCount;
 }
 @end

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		88804EAA20D68FB8001BAD36 /* focus.scpt in Resources */ = {isa = PBXBuildFile; fileRef = 88804EA920D68FB8001BAD36 /* focus.scpt */; };
 		D32270DC1F0DCE3B00728074 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D32270DB1F0DCE3B00728074 /* Assets.xcassets */; };
 		D32270EF1F0DCE7700728074 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D32270E71F0DCE7700728074 /* AppDelegate.m */; };
 		D32270F11F0DCE7700728074 /* library.metal in Sources */ = {isa = PBXBuildFile; fileRef = D32270EA1F0DCE7700728074 /* library.metal */; };
@@ -20,6 +21,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		88804EA920D68FB8001BAD36 /* focus.scpt */ = {isa = PBXFileReference; lastKnownFileType = text; path = focus.scpt; sourceTree = "<group>"; };
 		D32270CF1F0DCE3B00728074 /* window_focus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = window_focus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D32270DB1F0DCE3B00728074 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D32270E01F0DCE3B00728074 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -84,6 +86,7 @@
 				D32270DB1F0DCE3B00728074 /* Assets.xcassets */,
 				D32270E01F0DCE3B00728074 /* Info.plist */,
 				D32270EB1F0DCE7700728074 /* main.m */,
+				88804EA920D68FB8001BAD36 /* focus.scpt */,
 			);
 			path = window_focus;
 			sourceTree = "<group>";
@@ -159,6 +162,7 @@
 			files = (
 				D32270FE1F0DCEA000728074 /* capture.scpt in Resources */,
 				D32270DC1F0DCE3B00728074 /* Assets.xcassets in Resources */,
+				88804EAA20D68FB8001BAD36 /* focus.scpt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

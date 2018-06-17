@@ -12,12 +12,15 @@
 @implementation AppDelegate
 -(id)init {
   NSError *error = NULL;
-  NSAppleScript* capture_script = LOAD_APPLESCRIPT("capture.scpt");
   
-  if (!RUN_APPLESCRIPT(capture_script) || access(TMP_BG_LOC, F_OK)) {
+  NSAppleScript* capture_script = [[NSAppleScript alloc] initWithSource:get_file_contents(RES("capture.scpt"))];
+  
+  if (![capture_script executeAndReturnError:nil] || access(TMP_BG_LOC, F_OK)) {
     NSLog(@"Failed to take screenshot");
     return nil;
   }
+  
+  NSAppleScript* focus_script = [[NSAppleScript alloc] initWithSource:[NSString stringWithFormat:get_file_contents(RES("focus.scpt")), [CFBridgingRelease(CGWindowListCopyWindowInfo(kCGWindowListExcludeDesktopElements | kCGWindowListOptionOnScreenOnly, 0))[0][@"kCGWindowOwnerName"] UTF8String]]];
   
   NSScreen *screen = [NSScreen mainScreen];
   CGFloat scale_f = [screen backingScaleFactor];
@@ -54,17 +57,62 @@
   textureDescriptor.width = bg.width;
   textureDescriptor.height = bg.height;
   
-  _texture = [_device newTextureWithDescriptor:textureDescriptor];
+  _in_texture = [_device newTextureWithDescriptor:textureDescriptor];
   NSUInteger bytesPerRow = bg.chans * bg.width;
   MTLRegion region = {
     {0 ,       0,         0}, // MTLOrigin
     {bg.width, bg.height, 1}  // MTLSize
   };
   
-  [_texture replaceRegion:region
-              mipmapLevel:0
-                withBytes:bg.data.bytes
-              bytesPerRow:bytesPerRow];
+  [_in_texture replaceRegion:region
+                 mipmapLevel:0
+                   withBytes:bg.data.bytes
+                 bytesPerRow:bytesPerRow];
+  
+  textureDescriptor.usage = MTLTextureUsageShaderWrite | MTLTextureUsageShaderRead;
+  _out_texture = [_device newTextureWithDescriptor:textureDescriptor];
+  
+  const float radius = 10.f;
+  const float sigma = 3.f;
+  const int size = (round(radius) * 2) + 1;
+  
+  float delta = 0;
+  float expScale = 0;
+  if (radius > 0.0) {
+    delta = (radius * 2) / (size - 1);;
+    expScale = -1 / (2 * sigma * sigma);
+  }
+  
+  float *weights = malloc(sizeof(float) * size * size);
+  
+  float weightSum = 0;
+  float y = -radius;
+  for (int j = 0; j < size; ++j, y += delta) {
+    float x = -radius;
+    for (int i = 0; i < size; ++i, x += delta) {
+      float weight = expf((x * x + y * y) * expScale);
+      weights[j * size + i] = weight;
+      weightSum += weight;
+    }
+  }
+  
+  const float weightScale = 1 / weightSum;
+  for (int j = 0; j < size; ++j) {
+    for (int i = 0; i < size; ++i) {
+      weights[j * size + i] *= weightScale;
+    }
+  }
+  
+  MTLTextureDescriptor *w_textureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatR32Float
+                                                                                                 width:size
+                                                                                                height:size
+                                                                                             mipmapped:NO];
+  _weight_texture = [_device newTextureWithDescriptor:w_textureDescriptor];
+  
+  MTLRegion w_region = MTLRegionMake2D(0, 0, size, size);
+  [_weight_texture replaceRegion:w_region mipmapLevel:0 withBytes:weights bytesPerRow:sizeof(float) * size];
+  
+  free(weights);
   
   _vertexBuffer = [_device newBufferWithBytes:quadVertices
                                        length:sizeof(quadVertices)
@@ -73,7 +121,7 @@
   _numVertices = sizeof(quadVertices) / sizeof(AAPLVertex);
   
 #ifdef NO_XCODE
-  _library = [_device newLibraryWithSource:get_file_contents("library.metal")
+  _library = [_device newLibraryWithSource:get_file_contents(RES("library.metal"))
                                    options:nil
                                      error:&error];
   if(!_library) {
@@ -107,8 +155,18 @@
     return nil;
   }
   
+  _threadgroupSize = MTLSizeMake(16, 16, 1);
+  _threadgroupCount.width  = (_in_texture.width  + _threadgroupSize.width -  1) / _threadgroupSize.width;
+  _threadgroupCount.height = (_in_texture.height + _threadgroupSize.height - 1) / _threadgroupSize.height;
+  _threadgroupCount.depth = 1;
+  
   [_window setContentView:view];
   [_window makeKeyAndOrderFront:NSApp];
+  
+  if (![focus_script executeAndReturnError:nil]) {
+    NSLog(@"Failed to take screenshot");
+    return nil;
+  }
   
   return self;
 }
@@ -126,8 +184,26 @@
 -(void)drawInMTKView:(MTKView*)view {
   id <MTLCommandBuffer> commandBuffer = [_commandQueue commandBuffer];
   commandBuffer.label = @"MyCommand";
-  MTLRenderPassDescriptor *renderPassDescriptor = view.currentRenderPassDescriptor;
   
+  id <MTLComputeCommandEncoder> computeEncoder = [commandBuffer computeCommandEncoder];
+  
+  [computeEncoder setComputePipelineState:_pipeline];
+  
+  [computeEncoder setTexture:_in_texture
+                     atIndex:AAPLTextureIndexInput];
+  
+  [computeEncoder setTexture:_out_texture
+                     atIndex:AAPLTextureIndexOutput];
+  
+  [computeEncoder setTexture:_weight_texture
+                     atIndex:AAPLTextureIndexWeight];
+  
+  [computeEncoder dispatchThreadgroups:_threadgroupCount
+                 threadsPerThreadgroup:_threadgroupSize];
+  
+  [computeEncoder endEncoding];
+  
+  MTLRenderPassDescriptor *renderPassDescriptor = view.currentRenderPassDescriptor;
   if(renderPassDescriptor != nil) {
     id <MTLRenderCommandEncoder> renderEncoder =
     [commandBuffer renderCommandEncoderWithDescriptor:renderPassDescriptor];
@@ -145,8 +221,8 @@
                            length:sizeof(_viewportSize)
                           atIndex:AAPLVertexInputIndexViewportSize];
     
-    [renderEncoder setFragmentTexture:_texture
-                              atIndex:AAPLTextureIndexBaseColor];
+    [renderEncoder setFragmentTexture:_out_texture
+                              atIndex:AAPLTextureIndexInput];
     
     [renderEncoder drawPrimitives:MTLPrimitiveTypeTriangle
                       vertexStart:0

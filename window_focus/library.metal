@@ -17,12 +17,14 @@ typedef struct {
 typedef enum AAPLVertexInputIndex {
   AAPLVertexInputIndexVertices     = 0,
   AAPLVertexInputIndexViewportSize = 1,
-} AAPLVertexInputIndex;
+ } AAPLVertexInputIndex;
   
 typedef enum AAPLTextureIndex {
-  AAPLTextureIndexBaseColor = 0,
+  AAPLTextureIndexInput  = 0,
+  AAPLTextureIndexOutput = 1,
+  AAPLTextureIndexWeight = 2
 } AAPLTextureIndex;
-  
+    
 typedef struct {
   vector_float2 position;
   vector_float2 textureCoordinate;
@@ -46,7 +48,7 @@ vertexShader(uint vertexID [[ vertex_id ]],
 
 fragment float4
 samplingShader(RasterizerData in [[stage_in]],
-               texture2d<half> colorTexture [[ texture(AAPLTextureIndexBaseColor) ]]) {
+               texture2d<half> colorTexture [[ texture(AAPLTextureIndexInput) ]]) {
   constexpr sampler textureSampler(mag_filter::nearest,
                                    min_filter::nearest);
   
@@ -56,9 +58,9 @@ samplingShader(RasterizerData in [[stage_in]],
 }
 
 kernel void
-gaussian_blur_2d(texture2d<float, access::read> inTexture [[texture(0)]],
-                 texture2d<float, access::write> outTexture [[texture(1)]],
-                 texture2d<float, access::read> weights [[texture(2)]],
+gaussian_blur_2d(texture2d<float, access::read> inTexture [[texture(AAPLTextureIndexInput)]],
+                 texture2d<float, access::write> outTexture [[texture(AAPLTextureIndexOutput)]],
+                 texture2d<float, access::read> weights [[texture(AAPLTextureIndexWeight)]],
                  uint2 gid [[thread_position_in_grid]]) {
   int size = weights.get_width();
   int radius = size / 2;
