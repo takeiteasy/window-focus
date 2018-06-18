@@ -9,18 +9,26 @@
 #import "AppDelegate.h"
 #import "helper.h"
 
+static const char* original_app = NULL;
+static int enable_check = 0;
+
 @implementation AppDelegate
 -(id)init {
   NSError *error = NULL;
   
-  NSAppleScript* capture_script = [[NSAppleScript alloc] initWithSource:get_file_contents(RES("capture.scpt"))];
+  original_app = [CFBridgingRelease(CGWindowListCopyWindowInfo(kCGWindowListExcludeDesktopElements | kCGWindowListOptionOnScreenOnly, 0))[0][@"kCGWindowOwnerName"] UTF8String];
   
+  NSAppleScript* hide_script = [[NSAppleScript alloc] initWithSource:[NSString stringWithFormat:get_file_contents(RES("hide.scpt")), original_app]];
+  if (![hide_script executeAndReturnError:nil]) {
+    NSLog(@"Failed to minimize current program");
+    return nil;
+  }
+  
+  NSAppleScript* capture_script = [[NSAppleScript alloc] initWithSource:get_file_contents(RES("capture.scpt"))];
   if (![capture_script executeAndReturnError:nil] || access(TMP_BG_LOC, F_OK)) {
     NSLog(@"Failed to take screenshot");
     return nil;
   }
-  
-  NSAppleScript* focus_script = [[NSAppleScript alloc] initWithSource:[NSString stringWithFormat:get_file_contents(RES("focus.scpt")), [CFBridgingRelease(CGWindowListCopyWindowInfo(kCGWindowListExcludeDesktopElements | kCGWindowListOptionOnScreenOnly, 0))[0][@"kCGWindowOwnerName"] UTF8String]]];
   
   NSScreen *screen = [NSScreen mainScreen];
   CGFloat scale_f = [screen backingScaleFactor];
@@ -162,11 +170,15 @@
   
   [_window setContentView:view];
   [_window makeKeyAndOrderFront:NSApp];
+  [_window setIgnoresMouseEvents:YES];
   
+  NSAppleScript* focus_script = [[NSAppleScript alloc] initWithSource:[NSString stringWithFormat:get_file_contents(RES("focus.scpt")), original_app]];
   if (![focus_script executeAndReturnError:nil]) {
-    NSLog(@"Failed to take screenshot");
+    NSLog(@"Failed focus running process");
     return nil;
   }
+  
+  enable_check = 1;
   
   return self;
 }
@@ -182,6 +194,12 @@
 }
 
 -(void)drawInMTKView:(MTKView*)view {
+  if (enable_check) {
+    const char* test_app = [CFBridgingRelease(CGWindowListCopyWindowInfo(kCGWindowListExcludeDesktopElements | kCGWindowListOptionOnScreenOnly, 0))[0][@"kCGWindowOwnerName"] UTF8String];
+    if (strcmp(original_app, test_app))
+      [NSApp terminate:nil];
+  }
+  
   id <MTLCommandBuffer> commandBuffer = [_commandQueue commandBuffer];
   commandBuffer.label = @"MyCommand";
   

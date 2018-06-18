@@ -5,3 +5,5 @@ clang -fobjc-arc -lobjc \
 	-framework MetalKit \
 	-framework Foundation \
 	*.m -DNO_XCODE -DRES_PATH="\"$(pwd)\""
+./a.out
+rm a.out

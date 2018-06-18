@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		88804EAA20D68FB8001BAD36 /* focus.scpt in Resources */ = {isa = PBXBuildFile; fileRef = 88804EA920D68FB8001BAD36 /* focus.scpt */; };
+		88804EB020D86163001BAD36 /* hide.scpt in Resources */ = {isa = PBXBuildFile; fileRef = 88804EAF20D86163001BAD36 /* hide.scpt */; };
 		D32270DC1F0DCE3B00728074 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D32270DB1F0DCE3B00728074 /* Assets.xcassets */; };
 		D32270EF1F0DCE7700728074 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D32270E71F0DCE7700728074 /* AppDelegate.m */; };
 		D32270F11F0DCE7700728074 /* library.metal in Sources */ = {isa = PBXBuildFile; fileRef = D32270EA1F0DCE7700728074 /* library.metal */; };
@@ -22,6 +23,7 @@
 
 /* Begin PBXFileReference section */
 		88804EA920D68FB8001BAD36 /* focus.scpt */ = {isa = PBXFileReference; lastKnownFileType = text; path = focus.scpt; sourceTree = "<group>"; };
+		88804EAF20D86163001BAD36 /* hide.scpt */ = {isa = PBXFileReference; lastKnownFileType = text; path = hide.scpt; sourceTree = "<group>"; };
 		D32270CF1F0DCE3B00728074 /* window_focus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = window_focus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D32270DB1F0DCE3B00728074 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D32270E01F0DCE3B00728074 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -75,18 +77,19 @@
 		D32270D11F0DCE3B00728074 /* window_focus */ = {
 			isa = PBXGroup;
 			children = (
+				D32270ED1F0DCE7700728074 /* 3rdparty */,
 				D32270E61F0DCE7700728074 /* AppDelegate.h */,
 				D32270E71F0DCE7700728074 /* AppDelegate.m */,
-				D32270E91F0DCE7700728074 /* helper.h */,
-				D32270EC1F0DCE7700728074 /* Texture.m */,
-				D32270EE1F0DCE7700728074 /* Texture.h */,
-				D32270EA1F0DCE7700728074 /* library.metal */,
-				D32270E81F0DCE7700728074 /* capture.scpt */,
-				D32270ED1F0DCE7700728074 /* 3rdparty */,
 				D32270DB1F0DCE3B00728074 /* Assets.xcassets */,
-				D32270E01F0DCE3B00728074 /* Info.plist */,
-				D32270EB1F0DCE7700728074 /* main.m */,
+				D32270E81F0DCE7700728074 /* capture.scpt */,
 				88804EA920D68FB8001BAD36 /* focus.scpt */,
+				D32270E91F0DCE7700728074 /* helper.h */,
+				88804EAF20D86163001BAD36 /* hide.scpt */,
+				D32270E01F0DCE3B00728074 /* Info.plist */,
+				D32270EA1F0DCE7700728074 /* library.metal */,
+				D32270EB1F0DCE7700728074 /* main.m */,
+				D32270EE1F0DCE7700728074 /* Texture.h */,
+				D32270EC1F0DCE7700728074 /* Texture.m */,
 			);
 			path = window_focus;
 			sourceTree = "<group>";
@@ -163,6 +166,7 @@
 				D32270FE1F0DCEA000728074 /* capture.scpt in Resources */,
 				D32270DC1F0DCE3B00728074 /* Assets.xcassets in Resources */,
 				88804EAA20D68FB8001BAD36 /* focus.scpt in Resources */,
+				88804EB020D86163001BAD36 /* hide.scpt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

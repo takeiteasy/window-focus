@@ -1,9 +1,5 @@
-tell application "%s"
-  if it is running then
+tell application "System Events"
+  tell application "%s"
     activate
-  else
-    tell application "System Events"
-      set frontmost of process "%s" to true
-    end tell
-  end if
+  end tell
 end tell
